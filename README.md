@@ -16,7 +16,9 @@ A monolithic server that helps synchronize Blockchain transactions for chosen ad
 ## Common Usecases
 
 - Go to [Admin](http://127.0.0.1:8090/_/) panel
-  - Create Admin user
+  - Use Admin credentials
+    - Email: `alankritjoshi@gmail.com`
+    - Password: `alankritjoshi@gmail.com`
   - Create basic collections
   - Perform other activities like monitoring, auth, etc.
 - Use `curl` for Syncing a known `address_id`
