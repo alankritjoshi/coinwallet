@@ -7,9 +7,18 @@ import (
 	"net/http"
 )
 
-func GetBlockchainAddress(address string) (*BlockchainAddress, error) {
+const (
+	LIMIT          = 100
+	BLOCKCHAIN_URL = "https://blockchain.info/rawaddr"
+)
+
+func GetBlockchainAddress(address string, offset int) (*BlockchainAddress, error) {
 	// Make HTTP GET request to fetch transactions
-	resp, err := http.Get(fmt.Sprintf("https://blockchain.info/rawaddr/%s", address))
+	url := fmt.Sprintf("%s/%s?limit=%d", BLOCKCHAIN_URL, address, LIMIT)
+	if offset != 0 {
+		url += fmt.Sprintf("&offset=%d", offset)
+	}
+	resp, err := http.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch transactions: %w", err)
 	}

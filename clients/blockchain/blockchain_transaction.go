@@ -25,3 +25,23 @@ type BlockchainTransaction struct {
 		Script string `json:"script"`
 	} `json:"out"`
 }
+
+func (t *BlockchainTransaction) GetFromAddresses() []string {
+	var hashes []string
+
+	for _, input := range t.Inputs {
+		hashes = append(hashes, input.PrevOut.Hash)
+	}
+
+	return hashes
+}
+
+func (t *BlockchainTransaction) GetToAddresses() []string {
+	var hashes []string
+
+	for _, output := range t.Out {
+		hashes = append(hashes, output.Hash)
+	}
+
+	return hashes
+}
