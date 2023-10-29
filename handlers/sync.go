@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/alankritjoshi/coinwallet/clients/blockchain"
 	"github.com/alankritjoshi/coinwallet/models"
+	"github.com/alankritjoshi/coinwallet/workers"
 	"github.com/labstack/echo/v5"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
@@ -14,7 +14,7 @@ import (
 func registerSyncHandler(app *pocketbase.PocketBase) {
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-		e.Router.GET("/api/collections/addresses/:id/sync", func(c echo.Context) error {
+		e.Router.GET("/api/collections/addresses/records/:id/sync", func(c echo.Context) error {
 			id := c.PathParam("id")
 
 			// Check if address exists
@@ -24,13 +24,12 @@ func registerSyncHandler(app *pocketbase.PocketBase) {
 				return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("address_id %s not found", id))
 			}
 
-			// Fetch blockchain address
-			blockchain_address, err := blockchain.GetBlockchainAddress(address.BlockchainAddress)
-			if err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("failed to fetch address from blockchain: %s", err))
-			}
+			// Begin fetching and storing blockchain balance and transactions
+			go func() {
+				workers.SyncTransactionsForAddress(app, address.BlockchainAddress)
+			}()
 
-			return c.JSON(http.StatusOK, map[string]string{"message": fmt.Sprintf("balance found: %d", blockchain_address.FinalBalance)})
+			return c.JSON(http.StatusAccepted, map[string]string{"message": "sync started for address_id " + id})
 		})
 
 		return nil
