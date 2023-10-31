@@ -15,11 +15,11 @@ A monolithic server that helps synchronize Blockchain transactions for chosen ad
 
 ## Common Usecases
 
-- Go to [Admin](http://127.0.0.1:8090/_/) panel
+- Go to [Admin](http://0.0.0.0:8090/_/) panel
   - Use Admin credentials
     - Email: `alankritjoshi@gmail.com`
     - Password: `alankritjoshi@gmail.com`
   - Create basic collections
   - Perform other activities like monitoring, auth, etc.
 - Use `curl` for Syncing a known `address_id`
-  - `http://127.0.0.1:8090/api/collections/addresses/records/z2s6gwle0laatxv/sync`
+  - `http://0.0.0.0:8090/api/collections/addresses/records/z2s6gwle0laatxv/sync`

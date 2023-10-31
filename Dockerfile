@@ -23,8 +23,8 @@ WORKDIR /app
 # Copy the compiled binary from the builder stage to the final container
 COPY --from=builder /app/main .
 
-# Expose port 8080 for the server to listen on
-EXPOSE 8080
+# Expose port 8090 for the server to listen on
+EXPOSE 8090
 
 # Run the Go application
-CMD ["./main", "serve", "--http=0.0.0.0:8080"]
+CMD ["./main", "serve", "--http=0.0.0.0:8090"]

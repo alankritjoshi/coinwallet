@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"strings"
 
 	"github.com/alankritjoshi/coinwallet/clients/blockchain"
 	"github.com/pocketbase/pocketbase"
@@ -81,14 +82,20 @@ func createTransactionsBatchInDB(app *pocketbase.PocketBase, address_id *string,
 		for _, transaction := range transactions {
 			record := models.NewRecord(transactionsCollection)
 			// TODO: make sure from and to are set using the transaction addresses
+			record.Set("id", transaction.Hash)
 			record.Set("to", []string{*address_id})
-			record.Set("hash", transaction.Hash)
 			record.Set("index", transaction.TxIndex)
 			record.Set("relayed_by", transaction.RelayedBy)
 			record.Set("block_height", transaction.BlockHeight)
 			record.Set("version", transaction.Ver)
 			if err := txDao.SaveRecord(record); err != nil {
-				return err
+				if !strings.Contains(err.Error(), "UNIQUE constraint failed: transactions.id") {
+					log.Printf("failed to save transaction record for %s: %v", transaction.Hash, err)
+					return err
+				}
+				log.Printf("duplicate record for %s: %v. skipping", transaction.Hash, err)
+			} else {
+				log.Printf("record saved for %s", transaction.Hash)
 			}
 		}
 
